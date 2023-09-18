@@ -11,9 +11,11 @@ export const useGallery = () => {
   const [images, setImages] = useState([]); // 선택된 이미지
   const [selectedAlbum, setSelectedAlbum] = useState(defaultAlbum); // 현재 선택된 앨범
   const [albums, setAlbums] = useState([defaultAlbum]); // 앨범 리스트
-  const [modalVisible, setModalVisible] = useState(false); // 모달 온오프
+  const [textInputModalVisible, setTextInputMVisible] = useState(false); // 모달 온오프
+  const [bicImageModalVisible, setBigImageMVisible] = useState(false); // 모달 온오프
   const [albumTitle, setAlbumTitle] = useState(''); // 앨범 이름
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 앨범 드롭다운 효과
+  const [selectedImage, setSelectedImage] = useState(null); // 이미지 확대모달에 들어갈 이미지
 
   // 이미지 추가
   const pinkImage = async () => {
@@ -51,8 +53,11 @@ export const useGallery = () => {
   };
 
   // 모달 오픈
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
+  const openTextInputModal = () => setTextInputMVisible(true);
+  const closeTextInputModal = () => setTextInputMVisible(false);
+
+  const openBigImageModal = () => setBigImageMVisible(true);
+  const closeBigImageModal = () => setBigImageMVisible(false);
 
   // 드롤 다운 오픈
   const openDropdown = () => setIsDropdownOpen(true);
@@ -75,8 +80,8 @@ export const useGallery = () => {
   };
 
   // modal backdrop 누르면 닫기
-  const onPressBackdrop = () => {
-    closeModal();
+  const onPressTextInputModalBackdrop = () => {
+    closeTextInputModal();
   };
 
   // 앨범 삭제
@@ -101,6 +106,10 @@ export const useGallery = () => {
     ]);
   };
 
+  const selectImage = (image) => {
+    setSelectedImage(image);
+  };
+
   // textinput 초기화
   const resetAlbumTitle = () => setAlbumTitle('');
 
@@ -119,21 +128,26 @@ export const useGallery = () => {
   return {
     imageWithAddButton,
     selectedAlbum,
-    modalVisible,
+    textInputModalVisible,
     albumTitle,
     pinkImage,
     deleteImage,
-    openModal,
-    closeModal,
+    openTextInputModal,
+    closeTextInputModal,
     setAlbumTitle,
     addAlbum,
     resetAlbumTitle,
-    onPressBackdrop,
+    onPressTextInputModalBackdrop,
     isDropdownOpen,
     openDropdown,
     closeDropdown,
     albums,
     selectAlbum,
     deleteAlbum,
+    bicImageModalVisible,
+    openBigImageModal,
+    closeBigImageModal,
+    selectImage,
+    selectedImage,
   };
 };

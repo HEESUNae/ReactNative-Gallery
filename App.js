@@ -3,6 +3,7 @@ import { Dimensions, FlatList, Image, Platform, SafeAreaView, StyleSheet, Text, 
 import { useGallery } from './src/use-gallery';
 import MyDropDownPicker from './src/MyDropDownPicker';
 import TextInputModal from './src/TextInputModal';
+import BicImageModal from './src/BicImageModal';
 
 export default function App() {
   const {
@@ -10,20 +11,25 @@ export default function App() {
     deleteImage,
     imageWithAddButton,
     selectedAlbum,
-    modalVisible,
-    openModal,
-    closeModal,
+    textInputModalVisible,
+    openTextInputModal,
+    closeTextInputModal,
     albumTitle,
     setAlbumTitle,
     addAlbum,
     resetAlbumTitle,
-    onPressBackdrop,
+    onPressTextInputModalBackdrop,
     isDropdownOpen,
     openDropdown,
     closeDropdown,
     albums,
     selectAlbum,
     deleteAlbum,
+    bicImageModalVisible,
+    openBigImageModal,
+    closeBigImageModal,
+    selectImage,
+    selectedImage,
   } = useGallery();
 
   // 화면의 가로길이 구하기
@@ -40,14 +46,14 @@ export default function App() {
 
   // 앨범 추가
   const onPressAddAlbum = () => {
-    openModal();
+    openTextInputModal();
   };
 
   // 인풋값 저장
   const onSubmitEditing = () => {
     if (!albumTitle) return;
     addAlbum();
-    closeModal();
+    closeTextInputModal();
     resetAlbumTitle();
   };
 
@@ -60,17 +66,29 @@ export default function App() {
     }
   };
 
-  // 앨범선택시 함수
+  // 선택된 앨범 id 저장
   const onPressAlbum = (album) => {
     selectAlbum(album);
     closeDropdown();
   };
 
+  // 앨범 삭제
   const onLongPressAlbum = (albumId) => {
     deleteAlbum(albumId);
   };
 
-  const renderItem = ({ item: { id, uri }, index }) => {
+  // 이미지 자세히보기 모달 온오프
+  const onPressImage = (image) => {
+    selectImage(image);
+    openBigImageModal();
+  };
+
+  const onPressBicImageModalBackdrop = () => {
+    closeBigImageModal();
+  };
+
+  const renderItem = ({ item: image, index }) => {
+    const { id, uri } = image;
     // + 클릭했을경우
     if (id === -1) {
       return (
@@ -89,7 +107,7 @@ export default function App() {
       );
     }
     return (
-      <TouchableOpacity onLongPress={() => onLongPressImage(id)}>
+      <TouchableOpacity onPress={() => onPressImage(image)} onLongPress={() => onLongPressImage(id)}>
         <Image source={{ uri }} style={{ width: columnSize, height: columnSize }} />
       </TouchableOpacity>
     );
@@ -107,11 +125,16 @@ export default function App() {
         onLongPressAlbum={onLongPressAlbum}
       />
       <TextInputModal
-        modalVisible={modalVisible}
+        modalVisible={textInputModalVisible}
         albumTitle={albumTitle}
         setAlbumTitle={setAlbumTitle}
         onSubmitEditing={onSubmitEditing}
-        onPressBackdrop={onPressBackdrop}
+        onPressBackdrop={onPressTextInputModalBackdrop}
+      />
+      <BicImageModal
+        modalVisible={bicImageModalVisible}
+        onPressBackdrop={onPressBicImageModalBackdrop}
+        selectedImage={selectedImage}
       />
       <FlatList data={imageWithAddButton} renderItem={renderItem} numColumns={3} style={{ zIndex: -1 }} />
     </SafeAreaView>
