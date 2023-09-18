@@ -66,6 +66,7 @@ export const useGallery = () => {
       title: albumTitle,
     };
     setAlbums([...albums, newAlbum]);
+    setSelectedAlbum(newAlbum);
   };
 
   // 선택된 앨범 구하기
@@ -76,6 +77,28 @@ export const useGallery = () => {
   // modal backdrop 누르면 닫기
   const onPressBackdrop = () => {
     closeModal();
+  };
+
+  // 앨범 삭제
+  const deleteAlbum = (albumId) => {
+    if (albumId === defaultAlbum.id) {
+      Alert.alert('기본 앨범은 삭제할 수 없습니다.');
+      return;
+    }
+    Alert.alert('앨범을 삭제하시겠습니까?', '', [
+      {
+        style: 'cancel',
+        text: '아니요',
+      },
+      {
+        text: '네',
+        onPress: () => {
+          const newAlbums = albums.filter((album) => album.id !== albumId);
+          setAlbums(newAlbums);
+          setSelectedAlbum(defaultAlbum);
+        },
+      },
+    ]);
   };
 
   // textinput 초기화
@@ -111,5 +134,6 @@ export const useGallery = () => {
     closeDropdown,
     albums,
     selectAlbum,
+    deleteAlbum,
   };
 };

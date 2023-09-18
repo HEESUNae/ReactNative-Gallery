@@ -23,6 +23,7 @@ export default function App() {
     closeDropdown,
     albums,
     selectAlbum,
+    deleteAlbum,
   } = useGallery();
 
   // 화면의 가로길이 구하기
@@ -65,6 +66,10 @@ export default function App() {
     closeDropdown();
   };
 
+  const onLongPressAlbum = (albumId) => {
+    deleteAlbum(albumId);
+  };
+
   const renderItem = ({ item: { id, uri }, index }) => {
     // + 클릭했을경우
     if (id === -1) {
@@ -99,6 +104,7 @@ export default function App() {
         onPressHeader={onPressHeader}
         albums={albums}
         onPressAlbum={onPressAlbum}
+        onLongPressAlbum={onLongPressAlbum}
       />
       <TextInputModal
         modalVisible={modalVisible}
