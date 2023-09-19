@@ -110,11 +110,33 @@ export const useGallery = () => {
     setSelectedImage(image);
   };
 
-  // textinput 초기화
-  const resetAlbumTitle = () => setAlbumTitle('');
-
   // 선택된 앨범에 맞는 이미지 표출
   const filteredImages = images.filter((image) => image.alblumId === selectedAlbum.id);
+
+  // 이미지 모달 좌우이동
+  const moveToPreviousImage = () => {
+    if (!selectedImage) return;
+    const selectedImageIndex = filteredImages.findIndex((image) => image.id === selectedImage.id);
+    const previousImageIdx = selectedImageIndex - 1;
+    if (previousImageIdx < 0) return;
+    const previousImage = filteredImages[previousImageIdx];
+    setSelectedImage(previousImage);
+  };
+  const moveToNextImage = () => {
+    if (!selectedImage) return;
+    const selectedImageIndex = filteredImages.findIndex((image) => image.id === selectedImage.id);
+    const nextImageIdx = selectedImageIndex + 1;
+    if (nextImageIdx > filteredImages.length - 1 || nextImageIdx === -1) return;
+    const nextImage = filteredImages[nextImageIdx];
+    setSelectedImage(nextImage);
+  };
+
+  const showPreviousArrow = filteredImages.findIndex((image) => image.id === selectedImage?.id) !== 0;
+  const showNextArrow =
+    filteredImages.findIndex((image) => image.id === selectedImage?.id) !== filteredImages.length - 1;
+
+  // textinput 초기화
+  const resetAlbumTitle = () => setAlbumTitle('');
 
   // 배열 마지막에 "+" 추가
   const imageWithAddButton = [
@@ -149,5 +171,9 @@ export const useGallery = () => {
     closeBigImageModal,
     selectImage,
     selectedImage,
+    moveToPreviousImage,
+    moveToNextImage,
+    showPreviousArrow,
+    showNextArrow,
   };
 };

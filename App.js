@@ -30,6 +30,10 @@ export default function App() {
     closeBigImageModal,
     selectImage,
     selectedImage,
+    moveToPreviousImage,
+    moveToNextImage,
+    showPreviousArrow,
+    showNextArrow,
   } = useGallery();
 
   // 화면의 가로길이 구하기
@@ -82,9 +86,16 @@ export default function App() {
     selectImage(image);
     openBigImageModal();
   };
-
   const onPressBicImageModalBackdrop = () => {
     closeBigImageModal();
+  };
+
+  // 이미지 자세히보기 모달 좌우로 이동
+  const onPressLeftArrow = () => {
+    moveToPreviousImage();
+  };
+  const onPressRightArrow = () => {
+    moveToNextImage();
   };
 
   const renderItem = ({ item: image, index }) => {
@@ -135,6 +146,10 @@ export default function App() {
         modalVisible={bicImageModalVisible}
         onPressBackdrop={onPressBicImageModalBackdrop}
         selectedImage={selectedImage}
+        onPressLeftArrow={onPressLeftArrow}
+        onPressRightArrow={onPressRightArrow}
+        showPreviousArrow={showPreviousArrow}
+        showNextArrow={showNextArrow}
       />
       <FlatList data={imageWithAddButton} renderItem={renderItem} numColumns={3} style={{ zIndex: -1 }} />
     </SafeAreaView>
