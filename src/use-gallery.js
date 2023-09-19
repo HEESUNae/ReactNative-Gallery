@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultAlbum = {
   id: 1,
   title: '기본',
+};
+
+const ASYNC_KEY = {
+  IMAGES: 'images',
+  ALBUMS: 'albums',
 };
 
 export const useGallery = () => {
@@ -16,6 +22,16 @@ export const useGallery = () => {
   const [albumTitle, setAlbumTitle] = useState(''); // 앨범 이름
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 앨범 드롭다운 효과
   const [selectedImage, setSelectedImage] = useState(null); // 이미지 확대모달에 들어갈 이미지
+
+  // async storage 저장
+  const _setImages = (newImage) => {
+    setImages(newImage);
+    AsyncStorage.setItem(ASYNC_KEY.IMAGES, JSON.stringify(newImage));
+  };
+  const _setAlbums = (newAlbum) => {
+    setAlbums(newAlbum);
+    AsyncStorage.setItem(ASYNC_KEY.ALBUMS, JSON.stringify(newAlbum));
+  };
 
   // 이미지 추가
   const pinkImage = async () => {
@@ -31,7 +47,7 @@ export const useGallery = () => {
         uri: result.assets[0].uri,
         alblumId: selectedAlbum.id,
       };
-      setImages([...images, newImage]);
+      _setImages([...images, newImage]);
     }
   };
 
@@ -46,7 +62,7 @@ export const useGallery = () => {
         text: '네',
         onPress: () => {
           const newImage = images.filter((image) => image.id !== imageId);
-          setImages(newImage);
+          _setImages(newImage);
         },
       },
     ]);
@@ -70,7 +86,7 @@ export const useGallery = () => {
       id: lastId + 1,
       title: albumTitle,
     };
-    setAlbums([...albums, newAlbum]);
+    _setAlbums([...albums, newAlbum]);
     setSelectedAlbum(newAlbum);
   };
 
@@ -99,7 +115,7 @@ export const useGallery = () => {
         text: '네',
         onPress: () => {
           const newAlbums = albums.filter((album) => album.id !== albumId);
-          setAlbums(newAlbums);
+          _setAlbums(newAlbums);
           setSelectedAlbum(defaultAlbum);
         },
       },
@@ -130,7 +146,6 @@ export const useGallery = () => {
     const nextImage = filteredImages[nextImageIdx];
     setSelectedImage(nextImage);
   };
-
   const showPreviousArrow = filteredImages.findIndex((image) => image.id === selectedImage?.id) !== 0;
   const showNextArrow =
     filteredImages.findIndex((image) => image.id === selectedImage?.id) !== filteredImages.length - 1;
@@ -146,6 +161,26 @@ export const useGallery = () => {
       uri: '',
     },
   ];
+
+  const initValues = async () => {
+    // images
+    const imagesFromStorage = await AsyncStorage.getItem(ASYNC_KEY.IMAGES);
+    if (imagesFromStorage !== null) {
+      const parsed = JSON.parse(imagesFromStorage);
+      setImages(parsed);
+    }
+
+    // albums
+    const albumsFromStorage = await AsyncStorage.getItem(ASYNC_KEY.ALBUMS);
+    if (albumsFromStorage !== null) {
+      const parsed = JSON.parse(albumsFromStorage);
+      setAlbums(parsed);
+    }
+  };
+
+  useEffect(() => {
+    initValues();
+  }, []);
 
   return {
     imageWithAddButton,
