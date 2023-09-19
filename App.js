@@ -1,5 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions, FlatList, Image, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import { useGallery } from './src/use-gallery';
 import MyDropDownPicker from './src/MyDropDownPicker';
 import TextInputModal from './src/TextInputModal';
@@ -48,9 +58,27 @@ export default function App() {
   // 이미지 삭제
   const onLongPressImage = (imageId) => deleteImage(imageId);
 
+  const onPressWatchAd = () => {
+    // 광고
+  };
+
   // 앨범 추가
   const onPressAddAlbum = () => {
-    openTextInputModal();
+    // 2개이상 등록시 광고알림
+    if (albums.length >= 2) {
+      Alert.alert('광고를 시청해야 앨범을 추가할 수 있습니다.', '', [
+        {
+          style: 'cancel',
+          text: '닫기',
+        },
+        {
+          text: '광고 시청',
+          onPress: onPressWatchAd,
+        },
+      ]);
+    } else {
+      openTextInputModal();
+    }
   };
 
   // 인풋값 저장
